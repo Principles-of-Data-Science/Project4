@@ -1,0 +1,179 @@
+---
+title: "DSC 385 - Project 4 Report"
+format: html
+editor: source
+---
+
+
+## Name and EID
+
+Please enter your name and EID here.
+
+## Background
+
+Right heart catheterization (RHC) is a diagnostic procedure for directly measuring cardiac function in critically ill patients. In an influential study, Connors et al. (1996) studied the effectiveness of RHC with an observational study design. The study collected data on 5735 hospitalized adult patients; 2184 of them are assigned to the experimental treatment, receipt of RHC within 24 hours of admission, and the remaining 3551 assigned to the control condition. The outcome was death at 30 days after admission to the hospital. The goal is to assess the causal effect of RHC (the treatment) on the binary outcome, death at 30 days after admission.
+
+The dataset provided here is a cleaned version of the original dataset. The treatment variable in the dataset is `swang1` and the outcome variable is `death`. To simplify the analysis, we have restricted the data to 20 covariates that have been identified as the top confounders in an ad-hoc exploratory analysis.
+
+Below is a table describing each of the variables in the dataset:
+
+| Variable Name | Interpretation |
+|:--------------|:---------------|
+| age | Age in years |
+| sex | Male / Female | 
+| cat1 | Primary Diagnosis: COPD, Multiple Organ System Failure (MOSF) w/Sepsis, MOSF w/Malignancy, CHF, Coma, Cirrhosis, Lung Cancer, Colon Cancer |
+| cat2 | Secondary Diagnosis: MOSF w/Sepsis, Coma, MOSF w/Malignancy, Lung Cancer, Cirrhosis, Colon Cancer |
+| ca | yes = Cancer localized, no = metastatic |
+| death | Death within 30 days after hospital admission |
+| pafi1 | PaO2 / F102 ratio |
+| wtkilo1 | Weight |
+| surv2md1 | Estimate of probability of surviving 2 months |
+| dementhx | Dementia, stroke or cerebral infarct, Parkinsons's disease |
+| gastr | Gastrointestinal diagnosis |
+| wblc1 | White blood count |
+| temp1| Temperature|
+|das2d3pc | DASI-Duke Activity Status Index |
+| chfhx | Congestive heart failure |
+| hema | Hematological diagnosis |
+| chrpulhx | Chronic pulmonary disease, severe pulmonary disease |
+| cardiohx | Cardiovascular symptoms |
+| meta | Metabolic diagnosis|
+
+
+## Setup
+
+```{r}
+#| message: false
+
+library(tidyverse)
+library(MatchIt)
+
+## Load any additional packages that you need here
+
+```
+
+
+The following code loads the dataset, removes some unnecessary columns, and converts categorical variables to factors.
+
+```{r}
+## Read in the data and remove unnecessary columns
+dataset <- read_csv("rhc-demo.csv",
+                    col_select = c(-1, -ptid, -survtime, -urin1, -adld3p)) |>
+    mutate(across(where(is.character), factor)) |> ## Convert to factors
+    mutate(across(death:chrpulhx, factor))
+```
+
+We can take a quick look at the dataset and all of the variables.
+
+```{r}
+dataset
+dataset |>
+    glimpse()
+```
+
+
+## Part 1
+
+Let's compare the variables in the dataset between the treatment and control groups. The `swang1` variable indicates whether a person got right heart catheterization (`swang1 == RHC`) or did not (`swang1 == No RHC`). 
+
+First take a look at the **numeric** variables in the dataset and compare their means between treatment groups. 
+
+Do the two groups look similar to you based on the means of the numeric variables?
+
+```{r}
+## Add your code here
+
+```
+
+**Write your answer here**.
+
+
+## Part 2
+
+Now let's take a look at some of the other variables. For each of the **factor** variables in the dataset and for each treatment group, compute the proportion of people in the dataset that are equal to the first factor level of the variable. 
+
+NOTE: The `levels()` function can be used to identify the levels of a factor. For a variables `x`, the first factor level is `levels(x)[1]`.
+
+Which of the factor variables appears to have the largest absolute difference in proportion between the treatment groups?
+
+```{r}
+## Add your code here
+
+```
+
+
+**Write your answer here**.
+
+
+
+## Part 3
+
+Make a panel of boxplot(s) comparing the numeric variables across treatment groups. 
+
+HINT: If you use the `facet_wrap()` function, you should set `scales = "free_y"` to allow for different y-axis scales for the different ranges of the variables.
+
+
+```{r}
+## Add your code here
+
+```
+
+From the boxplots, which numeric variable, appears to have the largest difference between the treatment and control groups?
+
+**Write your answer here**.
+
+
+## Part 4
+
+Using the `MatchIt` package, fit a propensity score model using all the predictors **except** the `cat2` variable (which has too many `NA` values). The propensity score model should specify a matching ratio of 1:1.
+
+```{r}
+## Add your code here
+
+```
+
+
+Make a plot of the absolute standardized mean difference in each predictor variable for both before and after matching is done via the propensity score model. 
+
+NOTE: You can adjust the height of the figure in the HTML output document by setting `fig-height` to be a larger number.
+
+```{r}
+#| fig-height: 10
+
+## Add your code here
+
+```
+
+How would you describe the balance of the covariates between the treatment and control groups in the matched dataset?
+
+**Write your answer here**.
+
+
+
+## Part 5
+
+Create a 1-to-1 matched dataset using the propensity score model that you fit in the previous part. Call the new matched dataset `dataset_match`.
+
+```{r}
+## Add your code here
+
+```
+
+Run a simple logistic regression using the `dataset_match` object with the outcome `death` (death after 30 days from hospital admission) and the treatment variable `swang1`.
+
+What is the effect of right heart catheterization on 30-day mortality in these participants? 
+
+```{r}
+## Add your code here
+
+```
+
+**Write your answer here**.
+
+
+## Part 6
+
+Given what you saw in the propensity score analysis above, would you trust the result of this analysis? What potential confounding variables may explain the relationship between RHC and 30-day mortality?
+
+
+**Write your answer here**.
