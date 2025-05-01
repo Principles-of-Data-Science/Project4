@@ -125,7 +125,7 @@ From the boxplots, which numeric variable, appears to have the largest differenc
 
 ## Part 4
 
-Using the `MatchIt` package, fit a propensity score model using all the predictors **except** the `cat2` variable (which has too many `NA` values). The propensity score model should specify a matching ratio of 1:1.
+Using the `MatchIt` package, fit a propensity score model using all the predictors **except** the `cat2` variable (which has too many `NA` values) and the `death` variable. The propensity score model should specify a matching ratio of 1:1.
 
 ```{r}
 ## Add your code here
